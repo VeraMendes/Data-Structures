@@ -16,6 +16,11 @@ class LRUCache:
         self.cache = DoublyLinkedList()
         self.storage = {}
 
+        # self.limit = limit
+        ## self.size = 0
+        # self.order = DoublyLinkedList()
+        # self.storage = dict()
+
     """
     Retrieves the value associated with the given key. Also
     needs to move the key-value pair to the end of the order
@@ -24,15 +29,28 @@ class LRUCache:
     key-value pair doesn't exist in the cache.
     """
     def get(self, key):
-        # if doesn't exist in the storage
+
+        # if doesn't exist in cache
         if key not in self.storage:
             return None
         else:
+            # key is in cache
             # move to end of list to be considered most recently used
             node = self.storage[key]
-            self.cache.move_to_end(node)
-            # retrieve value for key
-            return node.value
+            self.cache.move_to_front(node)
+            # retrieve value for respective key
+            return node.value[1]
+
+        # # key is not in cache - return none
+        # if key not in self.storage:
+        #     return None
+        # else:
+        #     # key is in cache
+        #     # move it to most recently used
+        #     node = self.storage[key]
+        #     self.order.move_to_end(node)
+        #     # return value
+        #     return node.value[1]
      
     """
     Adds the given key-value pair to the cache. The newly-
@@ -45,52 +63,52 @@ class LRUCache:
     the newly-specified value.
     """
     def set(self, key, value):
-        value = self.storage[key]
+
+        # if key exists
         if key in self.storage:
-            self.cache.delete(value)
-            # self.storage.get(key)
-            # self.storage.update(value)
-            self.current -= 1
+            # overwrite the value
+            node = self.storage[key]
+            node.value = (key, value)
+            # move to the head (most recently used)
+            self.cache.move_to_front(node)
+            return
         
-        if self.current <= self.max:
-            self.cache.add_to_tail(value)
-            value = self.cache_list.tail
-            self.current += 1
-
-        if self.current > self.max:
-            self.cache.remove_from_head(value)
+        # size is at max limit
+        if self.current == self.max:
+            # evict the oldest one
+            key_of_oldest = self.cache.tail.value[0]
+            del self.storage[key_of_oldest]
+            self.cache.remove_from_tail()
+            # update current number of nodes that is holding
             self.current -= 1
-            self.cache.add_to_tail(value)
-            self.current += 1
 
-            # remove_key = list(self.cache.head.value.keys())[-1]
-            # del self.storage[remove_key]
-            # self.cache.delete(self.cache[-1])
+        # add to cache
+        self.cache.add_to_head((key, value))
+        # update current number of nodes that is holding
+        self.current += 1
+        # add it to storage
+        self.storage[key] = self.cache.head
 
+
+        # # if item/key already exists
         # if key in self.storage:
-        #     self.get()
+        #     # overwrite the value
+        #     # where is the value stored?
+        #     node = self.storage[key]
+        #     node.value = (key,value)
+        #     # move to the tail (most recently used)
+        #     self.order.move_to_end(node)
+        #     return
 
-        # if self.current > self.max:
-        #     self.cache.remove_from_head()
-        #     self.cache.add_to_tail({key:value})
+        #  # size is at limit
+        # if len(self.order) == self.limit:
+        #     # evict the oldest one
+        #     index_of_oldest = self.order.head.value[0]
+        #     del self.storage[index_of_oldest]
+        #     self.order.remove_from_head()
 
-        # elif self.current <= self.max:
-        #     self.cache.add_to_tail({key:value})
-        #     self.current += 1
-        #     self.storage[key] = value
-
-        # if self.cache.get(key) is None:
-        #     if self.current > self.max:
-        #         prev_node = self.cache.remove_from_head()
-        #         prev_key = list(prev_node)[-1]
-        #         del self.cache[prev_key]
-        #     self.cache.add_to_tail({key:value})
-        #     new_node = self.tail
-        #     self.cache[key] = new_node
-
-        # else:
-        #     node = self.cache[key]
-        #     node.value.update({key:value})
-        #     self.cache.move_to_end(node)
-
-        # for key, value in self.storage.items():
+        
+        # # add to order
+        # self.order.add_to_tail((key,value))
+        # # add it to storage
+        # self.storage[key] = self.order.tail
