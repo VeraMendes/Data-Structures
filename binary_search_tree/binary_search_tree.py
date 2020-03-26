@@ -10,23 +10,95 @@ class BinarySearchTree:
         self.left = None
         self.right = None
 
+    # bst = BinarySearchTree(new_value)
+
     # Insert the given value into the tree
-    def insert(self, value):
-        pass
+    def insert(self, new_value):
+        # check if empty
+        # if empty put node here/at root
+        bst = BinarySearchTree(new_value)
+
+        # if the new value is smaller than value already on node
+        if new_value < self.value:
+            # go left
+            # if left is a empty node
+            if self.left is None:
+                # leftnode.insertvalue
+                self.left = bst
+            else:    
+                # if left not none, do the whole process of insert        
+                self.left.insert(new_value)
+
+        # if the new value is bigger or equal than value already on node
+        elif new_value >= self.value:
+            # go right
+            # if right is a empty node
+            if self.right is None:
+                # rightnode.insertvalue
+                self.right = bst
+            else:
+                # if right not none, do the whole process of insert              
+                self.right.insert(new_value)
+
 
     # Return True if the tree contains the value
     # False if it does not
     def contains(self, target):
-        pass
+        
+        # if target is equal to value, return True
+        if self.value == target:
+            return True
+
+        else:
+            # if target is smaller than value
+            if target < self.value:
+                # go left branch
+                # does left node exist?
+                # if not return false
+                if self.left is None:
+                    return False
+                else:
+                    # continue looking
+                    return self.left.contains(target)
+
+            # if target is bigger or equal to value
+            elif target >= self.value:
+                # go right branch
+                # does right node exist?
+                # if not return false
+                if self.right is None:
+                    return False
+                else:
+                    # continue looking
+                    return self.right.contains(target)
+
 
     # Return the maximum value found in the tree
     def get_max(self):
-        pass
+   
+        # if there's a right:
+        if self.right is None:
+            # get max on right
+            return self.value
+        else:
+            # coninue looking on the right branch
+            return self.right.get_max()
+
 
     # Call the function `cb` on the value of each node
     # You may use a recursive or iterative approach
     def for_each(self, cb):
-        pass
+
+        # apply cb to value
+        cb(self.value)
+
+        # if node exists on the left branch, apply cb for each node
+        if self.right is not None:
+            self.right.for_each(cb)
+
+        # if node exists on the right branch, apply cb for each node
+        if self.left is not None:
+            self.left.for_each(cb)
 
     # DAY 2 Project -----------------------
 
